@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>Find Your Recipe</title>
+	<link href='https://fonts.googleapis.com/css?family=Josefin+Sans' rel='stylesheet' type='text/css'>
+	<link href="css/reset.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+	<div class="background-image"></div>
+	<div id="wrapper">
+		<header class="heading">
+			<h1>RECIPE SEARCH</h1>
+			<p>There are 3 things you could do with this app. If you have a recipe in mind, search directly by name leaving out the Cuisine dropdown menu. If you want to search recipes by cuisine, leave the field blank, choose a cuisine and click on Search. Lastly, type keywords like Milk, Eggs or other ingredients, choose a cuisine and hit Search.</p>
+			<p>Be ready to be blown out by a variety of recipes!!</p>
+		</header>
+
+		<section class="input-section">
+			<input id="ingredient" type="text" placeholder="Enter something...">
+			<select name="cuisines" id="cuisine-name">
+				<option disabled selected value="choose cuisine">Please choose a Cuisine</option>
+				<option value="american">American</option>
+				<option value="italian">Italian</option>
+				<option value="asian">Asian</option>
+				<option value="mexican">Mexican</option>
+				<option value="southern">Southern & Soul Food</option>
+				<option value="french">French</option>
+				<option value="southwestern">Southwestern</option>
+				<option value="barbecue">Barbecue</option>
+				<option value="indian">Indian</option>
+				<option value="chinese">Chinese</option>
+				<option value="cajun">Cajun & Creole</option>
+				<option value="english">English</option>
+				<option value="mediterranean">Mediterranean</option>
+				<option value="greek">Greek</option>
+				<option value="spanish">Spanish</option>
+				<option value="german">German</option>
+				<option value="thai">Thai</option>
+				<option value="moroccan">Moroccan</option>
+				<option value="irish">Irish</option>
+				<option value="japanese">Japanese</option>
+				<option value="cuban">Cuban</option>
+				<option value="hawaiin">Hawaiin</option>
+				<option value="swedish">Swedish</option>
+				<option value="hungarian">Hungarian</option>
+				<option value="portugese">Portugese</option>
+			</select>
+			<button id="searchButton" class="search">Search</button>  
+		</section>
+
+		<section class="recipe-list">
+			<ul class="recipe-details">
+				
+			</ul>
+		</section>
+	</div>
+	<script src="https://code.jquery.com/jquery.min.js"></script>
+	<script src="assets/jquery.js"></script>
+	<script src="react-capstone-recipe-finder.1.0.0.js"></script>
+</body>
+</html>
