@@ -2,29 +2,29 @@ var React = require('react');
 
 var RecipeRater = React.createClass({
     render: function() {
-        var stars = [];
+        var recipes = [];
         for (var i=0; i<5; i++) {
             var className;
             if (i < this.props.rating || 0) {
-                className = 'fa fa-star';
+                className = 'fa fa-recipe';
             }
             else {
-                className = 'fa fa-star-o';
+                className = 'fa fa-recipe-o';
             }
-            var star = (
+            var recipe = (
                 <i className={className} key={i}
                    onClick={this.props.onChange.bind(null, i + 1)}>
                 </i>
             );
-            stars.push(star);
+            recipes.push(recipe);
         }
 
         return (
             <span className="recipe-rater">
-                {stars}
+                {recipes}
             </span>
         );
     }
 });
 
-module.exports = StarRater;
+module.exports = RecipeRater;
