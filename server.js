@@ -49,43 +49,46 @@ if (require.main === module) {
 };
 
 
-//api call between the server and best buy api   
-var getRecipes = function(recipe_name) {
-    
-    //console.log("inside the getrecipes function");
-    
+//external api call function
+var getRecipes = function (keyword, cuisine, args) {
     var emitter = new events.EventEmitter();
-    
-    //https://www.npmjs.com/package/bestbuy
-    var bby = require('yummly')('c3c9925e2332619d733e4d365ff2f08c');
-    bby.recipes('(search=' + recipe_name + ')', {pageSize: 10}, function(err, data) {
-      if (err) {
-          console.warn(err);
-          emitter.emit('api call retuned error:', err);
-      }
-      else if (data.total === 0) {
-          console.log('No recipes found');
-          emitter.emit('No recipes found', err);
-      }
-      else {
-          console.log('Found %d recipes. First match "%s" is $%d', data.total, data.recipes[0].name, data.recipes[0].salePrice);
-          emitter.emit('end', data);
-      }
-    });
-    
+    unirest.get("http://api.yummly.com/v1/api/recipes?_app_id=6d9e22ab&_app_key=e4270a20949b90bf9cca1017d935f12b&q=" + keyword + "&allowedCuisine[]=cuisine^cuisine-" + cuisine + "&requirePictures=true")
+        .qs(args)
+        //after api call we get the response inside the "response" parameter
+        .end(function (response) {
+            //success scenario
+            if (response.ok) {
+                emitter.emit('end', response.body);
+            }
+            //failure scenario
+            else {
+                emitter.emit('error', response.code);
+            }
+        });
     return emitter;
 };
+
+
 
 /* STEP 4 - defining the local api end points*/
 
 //api call between the view and the controller
-app.get('/recipe/:recipe_name', function(request, response) {
+app.get('/recipe/:keyword/:cuisine', function(request, response) {
     //console.log(request.params.recipe_name);
-    if (request.params.recipe_name == "") {
-        response.json("Specify a recipe name");
+    
+    //request.params.cuisine = "Italian";
+    if (request.params.keyword == "") {
+        response.json("Specify a keyword");
+    }
+    if (request.params.cuisine == "") {
+        response.json("Specify a cuisine");
     }
     else {
-        var recipeDetails = getrecipes(request.params.recipe_name);
+        var recipeDetails = getRecipes (request.params.keyword, request.params.cuisine, {
+        contentType: "application/json",
+        async: false,
+        dataType: "json"
+});
 
         //get the data from the first api call
         recipeDetails.on('end', function(item) {
@@ -100,18 +103,18 @@ app.get('/recipe/:recipe_name', function(request, response) {
     }
 });
 
-// app.post('/favorite-recipe', function(req, res) {
-//     recipe.create({
-//         name: req.body.recipeName
-//     }, function(err, recipes) {
-//         if (err) {
-//             return res.status(500).json({
-//                 message: 'Internal Server Error'
-//             });
-//         }
-//         res.status(201).json(recipes);
-//     });
-// });
+app.post('/favorite-recipes', function(req, res) {
+    Recipe.create({
+        name: req.body.recipeName
+    }, function(err, recipes) {
+        if (err) {
+            return res.status(500).json({
+                message: 'Internal Server Error'
+            });
+        }
+        res.status(201).json(recipes);
+    });
+});
 app.get('/favorite-recipes', function(req, res) {
     Recipe.find(function(err, recipes) {
         if (err) {
@@ -123,16 +126,16 @@ app.get('/favorite-recipes', function(req, res) {
     });
 });
 
-// app.delete('/delete-favorites', function (req, res) {
-//     recipe.remove(req.params.id, function (err, items) {
-//         if (err)
-//             return res.status(404).json({
-//                 message: 'Item not found.'
-//             });
+app.delete('/delete-favorites', function (req, res) {
+    Recipe.remove(req.params.id, function (err, items) {
+        if (err)
+            return res.status(404).json({
+                message: 'Item not found.'
+            });
 
-//         res.status(200).json(items);
-//     });
-// });
+        res.status(200).json(items);
+    });
+});
 
 /* STEP 6 - start and run the server*/
 exports.app = app;
