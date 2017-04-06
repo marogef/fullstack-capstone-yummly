@@ -125,11 +125,14 @@ function deleteFavorites() {
         .done(function(recipe) {
             getFavoriteRecipes();
         })
-        .fail(function(jqXHR, error, errorThrown) {
-            console.log(jqXHR);
-            console.log(error);
-            console.log(errorThrown);
-        });
+        // .fail(function(jqXHR, error, errorThrown) {
+        //     console.log(jqXHR);
+        //     console.log(error);
+        //     console.log(errorThrown);
+        // });
+        
+                .fail(ifResultsFail);
+
 }
 //function to get the favorite recipe
 function getFavoriteRecipes() {
@@ -163,17 +166,17 @@ function getFavoriteRecipes() {
 
 
 
-
-// //function to get results from api
-// function getResults(query) {
-//     //console.log(query);
-//     var url = '/recipe/' + query;
-//     $.ajax({
-//         method: 'GET',
-//         dataType: 'json',
-//         url: url,
-//     }).done(ajaxDone).fail(ifResultsFail);
-// }
+//new addition
+//function to get results from api
+function getResults(query) {
+    //console.log(query);
+    var url = '/recipe/' + query;
+    $.ajax({
+        method: 'GET',
+        dataType: 'json',
+        url: url,
+    }).done(ajaxDone).fail(ifResultsFail);
+}
 // //function to get the shorten the output
 // function sanitizeJSON(unsanitized) {
 //     var str = JSON.stringify(unsanitized);
@@ -275,26 +278,26 @@ function getFavoriteRecipes() {
 //     return output;
 // }
 // //function in case if results fail
-// function ifResultsFail(jqXHR, error, errorThrown) {
-//     console.log(jqXHR);
-//     console.log(error);
-//     console.log(errorThrown);
-// }
+function ifResultsFail(jqXHR, error, errorThrown) {
+    console.log(jqXHR);
+    console.log(error);
+    console.log(errorThrown);
+}
 
-// //function for displaying output
-// function ajaxDone(result) {
-//     console.log("ajax done", result);
-//     var output = '';
-//     if (result.recipes.length == 0) {
-//         alert('No Results Found!');
-//     }
-//     else {
-//         if (!result.error && result.recipes) {
-//             output = result.recipes.reduce(resultsIntoListItem, '');
-//         }
-//         else {
-//             output = 'Unable to access recipes (see browser console for more information)';
-//         }
-//         $('.results ul').html(output);
-//     }
-// }
+//function for displaying output
+function ajaxDone(result) {
+    console.log("ajax done", result);
+    var output = '';
+    if (result.recipes.length == 0) {
+        alert('No Results Found!');
+    }
+    else {
+        if (!result.error && result.recipes) {
+            output = result.recipes.reduce(resultsIntoListItem, '');
+        }
+        else {
+            output = 'Unable to access recipes (see browser console for more information)';
+        }
+        $('.results ul').html(output);
+    }
+}
