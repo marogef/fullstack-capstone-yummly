@@ -1,7 +1,7 @@
 //function to hide results when document loads
 $(document).ready(function() {
     $(".search-results").hide();
-    // getFavoriteRecipes();
+    getFavoriteRecipes();
 });
 
 $('#searchButton').on('click', function(event) {
@@ -88,6 +88,18 @@ $(document).on('click', ".favorites", function(key) {
 $(document).on('click', ".delete-favorites", function(key) {
     deleteFavorites();
 });
+//&moved location to here
+//function to get results from api
+function getResults(query) {
+    //console.log(query);
+    var url = '/recipe/' + query;
+    $.ajax({
+        method: 'GET',
+        dataType: 'json',
+        url: url,
+    }).done(ajaxDone).fail(ifResultsFail);
+}
+
 
 //function to add items 
 function addFavoriteRecipe(favoriteRecipeName) {
@@ -107,11 +119,13 @@ function addFavoriteRecipe(favoriteRecipeName) {
         .done(function(recipe) {
             getFavoriteRecipes();
         })
-        .fail(function(jqXHR, error, errorThrown) {
-            console.log(jqXHR);
-            console.log(error);
-            console.log(errorThrown);
-        });
+        // .fail(function(jqXHR, error, errorThrown) {
+        //     console.log(jqXHR);
+        //     console.log(error);
+        //     console.log(errorThrown);
+        // });
+                .fail(ifResultsFail);
+
 }
 
 //function to delete favorites
@@ -155,29 +169,21 @@ function getFavoriteRecipes() {
             $(".favorites-container ul").html(buildTheHtmlOutput);
 
         })
-        .fail(function(jqXHR, error, errorThrown) {
-            console.log(jqXHR);
-            console.log(error);
-            console.log(errorThrown);
-        });
+        // .fail(function(jqXHR, error, errorThrown) {
+        //     console.log(jqXHR);
+        //     console.log(error);
+        //     console.log(errorThrown);
+        // });
+        
+                .fail(ifResultsFail);
 }
 
 
 
 
 
-//new addition
-//function to get results from api
-function getResults(query) {
-    //console.log(query);
-    var url = '/recipe/' + query;
-    $.ajax({
-        method: 'GET',
-        dataType: 'json',
-        url: url,
-    }).done(ajaxDone).fail(ifResultsFail);
-}
-// //function to get the shorten the output
+
+//function to get the shorten the output
 // function sanitizeJSON(unsanitized) {
 //     var str = JSON.stringify(unsanitized);
 //     var output = str
@@ -193,90 +199,90 @@ function getResults(query) {
 //         .replace(/\&/g, "");
 //     return output;
 // }
+//changed this
+//function for showing results
+function resultsIntoListItem(output, recipe) {
+    var isSale;
+    output += '<li>';
+    output += '<div class="recipe-container">';
+    output += '<div class="title-wrapper"><h3 class="clamp-this">' + sanitizeJSON(recipe.name) + '</h3></div>';
+    output += '<img src="' + recipe.image + '">';
+    output += '<div class = "recipe-details">';
+    if (recipe.customerReviewCount != null) {
+        output += '<p class="review-num">' + recipe.customerReviewCount + ' Reviews</p>';
+    }
+    if (recipe.customerReviewAverage != null) {
+        output += '<p class="star-avg">' + recipe.customerReviewAverage + ' Stars</p>';
+    }
 
-// //function for showing results
-// function resultsIntoListItem(output, recipe) {
-//     var isSale;
-//     output += '<li>';
-//     output += '<div class="recipe-container">';
-//     output += '<div class="title-wrapper"><h3 class="clamp-this">' + sanitizeJSON(recipe.name) + '</h3></div>';
-//     output += '<img src="' + recipe.image + '">';
-//     output += '<div class = "recipe-details">';
-//     if (recipe.customerReviewCount != null) {
-//         output += '<p class="review-num">' + recipe.customerReviewCount + ' Reviews</p>';
-//     }
-//     if (recipe.customerReviewAverage != null) {
-//         output += '<p class="star-avg">' + recipe.customerReviewAverage + ' Stars</p>';
-//     }
+    if ((recipe.salePrice < recipe.regularPrice) && (recipe.salePrice != null)) {
+        output += '<p class="reg-price strikethrough">$' + recipe.regularPrice + '</p>';
+        output += '<p class="sale-price highlight">Sale: $' + recipe.salePrice + '</p>';
+        isSale = true;
+    }
+    else {
+        output += '<p class="reg-price strong no-sale">$' + recipe.regularPrice + '</p>';
+        isSale = false;
+    }
+    output += '</div>';
+    if (isSale == false) {
+        output += '<a href="' + recipe.addToCartUrl + '" class="add-to-cart">Add to Cart</a>';
+    }
+    else {
+        output += '<a href="' + recipe.addToCartUrl + '" class="add-to-cart sale-button">Add to Cart</a>';
+    }
+    output += '</div>';
+    output += '</li>';
+    return output;
+}
 
-//     if ((recipe.salePrice < recipe.regularPrice) && (recipe.salePrice != null)) {
-//         output += '<p class="reg-price strikethrough">$' + recipe.regularPrice + '</p>';
-//         output += '<p class="sale-price highlight">Sale: $' + recipe.salePrice + '</p>';
-//         isSale = true;
-//     }
-//     else {
-//         output += '<p class="reg-price strong no-sale">$' + recipe.regularPrice + '</p>';
-//         isSale = false;
-//     }
-//     output += '</div>';
-//     if (isSale == false) {
-//         output += '<a href="' + recipe.addToCartUrl + '" class="add-to-cart">Add to Cart</a>';
-//     }
-//     else {
-//         output += '<a href="' + recipe.addToCartUrl + '" class="add-to-cart sale-button">Add to Cart</a>';
-//     }
-//     output += '</div>';
-//     output += '</li>';
-//     return output;
-// }
+//changed this
+//function to display results of list items
+function resultsIntoListItem(output, recipe) {
+    var isSale;
+    output += '<li>';
+    output += '<div class="recipe-container">';
+    output += '<div class="add-recipe-to-favorites">';
+    output += '<input type="hidden" value="' + sanitizeJSON(recipe.name) + '">';
+    output += '<button class="favorites"><img src="images/add-to-favorites.png"></button>';
+    output += '</div>';
+    output += '<div class="title-wrapper"><h3 class="clamp-this">' + sanitizeJSON(recipe.name) + '</h3></div>';
+    if (recipe.image != null) {
+        output += '<img src="' + recipe.image + '">';
+    }
+    else {
+        output += '<img src="images/recipe-image-not-found.gif">';
+    }
+    output += '<div class = "recipe-details">';
+    if (recipe.customerReviewCount != null) {
+        output += '<p class="review-num">' + recipe.customerReviewCount + ' Reviews</p>';
+    }
+    if (recipe.customerReviewAverage != null) {
+        output += '<p class="star-avg">' + recipe.customerReviewAverage + ' Stars</p>';
+    }
 
+    if ((recipe.salePrice < recipe.regularPrice) && (recipe.salePrice != null)) {
+        output += '<p class="reg-price strikethrough">$' + recipe.regularPrice + '</p>';
+        output += '<p class="sale-price highlight">Sale: $' + recipe.salePrice + '</p>';
+        isSale = true;
+    }
+    else {
+        output += '<p class="reg-price strong no-sale">$' + recipe.regularPrice + '</p>';
+        isSale = false;
+    }
+    output += '</div>';
+    if (isSale == false) {
+        output += '<a href="' + recipe.addToCartUrl + '" class="add-to-cart">Add to Cart</a>';
 
-// //function to display results of list items
-// function resultsIntoListItem(output, recipe) {
-//     var isSale;
-//     output += '<li>';
-//     output += '<div class="recipe-container">';
-//     output += '<div class="add-recipe-to-favorites">';
-//     output += '<input type="hidden" value="' + sanitizeJSON(recipe.name) + '">';
-//     output += '<button class="favorites"><img src="images/add-to-favorites.png"></button>';
-//     output += '</div>';
-//     output += '<div class="title-wrapper"><h3 class="clamp-this">' + sanitizeJSON(recipe.name) + '</h3></div>';
-//     if (recipe.image != null) {
-//         output += '<img src="' + recipe.image + '">';
-//     }
-//     else {
-//         output += '<img src="images/recipe-image-not-found.gif">';
-//     }
-//     output += '<div class = "recipe-details">';
-//     if (recipe.customerReviewCount != null) {
-//         output += '<p class="review-num">' + recipe.customerReviewCount + ' Reviews</p>';
-//     }
-//     if (recipe.customerReviewAverage != null) {
-//         output += '<p class="star-avg">' + recipe.customerReviewAverage + ' Stars</p>';
-//     }
+    }
+    else {
+        output += '<a href="' + recipe.addToCartUrl + '" class="add-to-cart sale-button">Add to Cart</a>';
 
-//     if ((recipe.salePrice < recipe.regularPrice) && (recipe.salePrice != null)) {
-//         output += '<p class="reg-price strikethrough">$' + recipe.regularPrice + '</p>';
-//         output += '<p class="sale-price highlight">Sale: $' + recipe.salePrice + '</p>';
-//         isSale = true;
-//     }
-//     else {
-//         output += '<p class="reg-price strong no-sale">$' + recipe.regularPrice + '</p>';
-//         isSale = false;
-//     }
-//     output += '</div>';
-//     if (isSale == false) {
-//         output += '<a href="' + recipe.addToCartUrl + '" class="add-to-cart">Add to Cart</a>';
-
-//     }
-//     else {
-//         output += '<a href="' + recipe.addToCartUrl + '" class="add-to-cart sale-button">Add to Cart</a>';
-
-//     }
-//     output += '</div>';
-//     output += '</li>';
-//     return output;
-// }
+    }
+    output += '</div>';
+    output += '</li>';
+    return output;
+}
 // //function in case if results fail
 function ifResultsFail(jqXHR, error, errorThrown) {
     console.log(jqXHR);
