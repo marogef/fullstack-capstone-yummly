@@ -41,7 +41,7 @@ function getRecipesFromBackend(keyword, cuisine) {
             dataType: 'json',
         })
         .done(function(result) {
-            console.log(result);
+            // console.log(result);
 
 
             $('.recipe-details').html('');
@@ -80,7 +80,8 @@ function getRecipesFromBackend(keyword, cuisine) {
 
 //clicking the favorites to add the recipe 
 $(document).on('click', ".favorites", function(key) {
-    var favoriteRecipeName = $(this).closest('.add-recipe-to-favorites').find('input').val();
+    var favoriteRecipeName = $(this).closest('li').find('input').val();
+    // console.log(favoriteRecipeName);
     addFavoriteRecipe(favoriteRecipeName);
 });
 
@@ -104,10 +105,10 @@ function getResults(query) {
 //function to add items 
 function addFavoriteRecipe(favoriteRecipeName) {
 
-    console.log(favoriteRecipeName);
+    // console.log(favoriteRecipeName);
 
     var favoriteRecipe = {
-        'recipeName': favoriteRecipeName
+        recipeName: favoriteRecipeName
     };
 
     $.ajax({
@@ -157,7 +158,7 @@ function getFavoriteRecipes() {
             url: '/favorite-recipes',
         })
         .done(function(recipes) {
-            console.log(recipes);
+            // console.log(recipes);
 
             var buildTheHtmlOutput = "";
 
