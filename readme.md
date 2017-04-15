@@ -22,6 +22,6 @@ Methods: GET, POST, PUT, DELETE.
 
 Design features: Design features: The design for the website includes desktop and tablet devices.
 
-Direct link: https://fullstack-and-react-capstone-yummly-goldencrane33.c9users.io/.
+Direct link: https://github.com/marogef/fullstack-capstone-yummly.
 
 Final comment: Special thanks to Yummly for proving us with this awesome capability.
