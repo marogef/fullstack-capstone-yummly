@@ -78,7 +78,7 @@
     "method-override": "^2.3.7",
     "mkdirp": "^0.5.1",
     "mongodb": "^2.2.11",
-    "mongoose": "^4.7.5",
+    "mongoose": "^5.9.12",
     "mkdirp": "^0.5.1",
     "mocha": "^3.0.1",
     "npm-run-all": "^3.0.0",
